@@ -8,6 +8,8 @@ start_discovery_server()
 HOST = get_local_ip()
 PORT = 5000
 
+your_name = input("Enter your username: ")
+
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -19,8 +21,13 @@ print(f"Server listening on {HOST}:{PORT}")
 conn, addr = server_socket.accept()
 print(f"Connect by {addr}")
 
-recv_thread = threading.Thread(target=handle_receive, args=(conn,))
-send_thread = threading.Thread(target=handle_send, args=(conn,))
+client_name = conn.recv(1024).decode()
+conn.sendall(your_name.encode())
+
+print(f"Connected with {client_name}")
+
+recv_thread = threading.Thread(target=handle_receive, args=(conn, client_name))
+send_thread = threading.Thread(target=handle_send, args=(conn, your_name))
 
 recv_thread.start()
 send_thread.start()

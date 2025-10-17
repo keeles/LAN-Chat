@@ -12,7 +12,7 @@ def get_local_ip():
         s.close()
     return ip
 
-def handle_receive(conn):
+def handle_receive(conn, friend_name="Friend"):
     while True:
         try:
             data = conn.recv(1024)
@@ -20,7 +20,7 @@ def handle_receive(conn):
                 print("Disconnected")
                 break
             message = data.decode().strip()
-            print(f"\nFriend: {message}")
+            print(f"\n{friend_name}: {message}")
             print("You: ", end="", flush=True)
         except ConnectionResetError:
             print("\nConnection closed.")
@@ -29,12 +29,12 @@ def handle_receive(conn):
             print(f"\nError: {e}")
             break
 
-def handle_send(conn):
+def handle_send(conn, your_name="You"):
     while True:
         try:
-            message = input("You: ")
+            message = input(f"{your_name}: ")
             if message.lower().strip() == "quit":
-                print("You: Disconnected")
+                print(f"{your_name}: Disconnected")
                 conn.close()
                 break
             conn.sendall(message.encode())
